@@ -9,8 +9,16 @@
  * @param {HTMLCanvasElement} canvas - L'élément canvas représentant la surface de jeu.
  * @returns {{x: number, y: number}} - Un objet contenant les coordonnées `x` et `y` de la nourriture générée.
  */
-function generateFood() {
-  // A compléter
+export function generateFood(box, canvas) {
+  // Calculer les dimensions de la grille
+  const rows = Math.floor(canvas.height / box);
+  const cols = Math.floor(canvas.width / box);
+
+  // Générer des positions aléatoires pour la nourriture
+  const x = Math.floor(Math.random() * cols) * box;
+  const y = Math.floor(Math.random() * rows) * box;
+
+  return { x, y };
 }
 
 /**
@@ -25,11 +33,19 @@ function generateFood() {
  * @param {number} box - La taille d'une case de la grille en pixels, utilisée pour déterminer la taille de la nourriture.
  */
 
-function setup() {
-  createCanvas(100, 100, WEBGL);
+export function setup() {
+  const canvas = document.getElementById('gameCanvas'); // Assurez-vous que le canvas existe
+  const ctx = canvas.getContext('2d'); // Obtient le contexte 2D
 
-  describe('A white square spins around on gray canvas.');
+  const box = 20; // Taille de la case (ajustez selon votre grille)
+  
+  // Générer la position de la nourriture
+  const food = generateFood(box, canvas);
+  
+  // Dessiner la nourriture
+  drawFood(ctx, food, box);
 }
+
 
 function draw() {
 
@@ -50,6 +66,10 @@ function draw() {
   //color
   backgroundcolor
 }
-function drawFood() {
-  // A compléter
+export function drawFood(ctx, food, box) {
+  ctx.fillStyle = '#FF6347'; // Couleur rouge pour la nourriture
+  ctx.fillRect(food.x, food.y, box, box); // Dessiner un carré représentant la nourriture
 }
+window.onload = () => {
+  setup(); // Appel de la fonction setup lorsque la page est chargée
+};

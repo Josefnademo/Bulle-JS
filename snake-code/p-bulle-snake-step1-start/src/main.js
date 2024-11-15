@@ -27,6 +27,7 @@ function startGame() {
 }
 
 function draw() {
+ 
   // A compléter
 }
 
