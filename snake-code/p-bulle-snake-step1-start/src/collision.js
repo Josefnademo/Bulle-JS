@@ -28,5 +28,15 @@ export function checkCollision() {
  * @returns {boolean} - Retourne `true` si la tête du serpent entre en collision avec un mur, sinon `false`.
  */
 export function checkWallCollision() {
-  // A compléter
+ 
+   // Проверка на столкновение с краем поля или собой
+   if (
+    newHead.x < 0 || newHead.x >= game.width ||
+    newHead.y < 0 || newHead.y >= game.height ||
+    game.snake.some(part => part.x === newHead.x && part.y === newHead.y)
+  ) {
+    game.gameOver = true;
+    clearInterval(updateGame);
+    return;
+  }
 }

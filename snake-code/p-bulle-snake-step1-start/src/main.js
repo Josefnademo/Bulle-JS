@@ -20,6 +20,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 function startGame() {
+
+  
   snake = initSnake();
   food = generateFood(box, canvas);
 

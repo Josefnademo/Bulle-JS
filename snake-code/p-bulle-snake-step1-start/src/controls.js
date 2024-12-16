@@ -12,4 +12,29 @@
  */
 export function handleDirectionChange() {
   // A compléter
+  
+// Обновление состояния игры
+function updateGame() {
+  let newHead = { ...game.snake[0] };
+
+  // Двигаем голову змеи
+  switch (game.direction) {
+    case 'UP':
+      newHead.y -= 1;
+      break;
+    case 'DOWN':
+      newHead.y += 1;
+      break;
+    case 'LEFT':
+      newHead.x -= 1;
+      break;
+    case 'RIGHT':
+      newHead.x += 1;
+      break;
+  }
+
+  // Двигать змею
+  socket.on('move', (direction) => {
+    game.direction = direction;
+  });
 }
