@@ -1,3 +1,5 @@
+// snake.js
+
 /**
  * Initialise le serpent au début du jeu.
  *
@@ -7,7 +9,8 @@
  * @returns {Array<{x: number, y: number}>} - Un tableau contenant un objet représentant la position du premier segment du serpent.
  */
 export function initSnake() {
-  // A compléter
+  const initialSnake = [{ x: 10, y: 10 }]; // Position initiale du serpent
+  return initialSnake;
 }
 
 /**
@@ -22,8 +25,29 @@ export function initSnake() {
  * @param {number} box - La taille d'une case de la grille en pixels, utilisée pour déterminer la distance de déplacement du serpent.
  * @returns {{x: number, y: number}} - Un objet représentant les nouvelles coordonnées `x` et `y` de la tête du serpent après le déplacement.
  */
-export function moveSnake() {
-  // A compléter
+export function moveSnake(snake, direction, box) {
+  let newHead;
+  switch (direction) {
+    case "LEFT":
+      newHead = { x: snake[0].x - box, y: snake[0].y };
+      break;
+    case "UP":
+      newHead = { x: snake[0].x, y: snake[0].y - box };
+      break;
+    case "RIGHT":
+      newHead = { x: snake[0].x + box, y: snake[0].y };
+      break;
+    case "DOWN":
+      newHead = { x: snake[0].x, y: snake[0].y + box };
+      break;
+    default:
+      break;
+  }
+
+  // Le reste du corps du serpent suit la tête
+  snake.unshift(newHead);
+  snake.pop(); // Retire le dernier segment du serpent pour simuler le mouvement
+  return newHead;
 }
 
 /**
@@ -38,6 +62,10 @@ export function moveSnake() {
  * @param {Array<{x: number, y: number}>} snake - Un tableau représentant le serpent, où chaque élément est un segment avec des coordonnées `x` et `y`.
  * @param {number} box - La taille d'une case de la grille en pixels, utilisée pour déterminer la taille de chaque segment du serpent.
  */
-export function drawSnake() {
-  // A compléter
+export function drawSnake(ctx, snake, box) {
+  ctx.fillStyle = "green"; // Couleur de la tête du serpent
+  snake.forEach((segment, index) => {
+    ctx.fillStyle = index === 0 ? "green" : "lightgreen"; // Différencier la tête du reste du corps
+    ctx.fillRect(segment.x, segment.y, box, box); // Dessiner le segment
+  });
 }

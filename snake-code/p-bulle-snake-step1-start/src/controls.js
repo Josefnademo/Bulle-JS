@@ -1,40 +1,32 @@
-/**
- * Gère le changement de direction du serpent en fonction de l'entrée de l'utilisateur.
- *
- * Cette fonction est appelée chaque fois qu'une touche directionnelle est pressée.
- * Elle vérifie que la nouvelle direction n'est pas opposée à la direction actuelle
- * (pour éviter que le serpent se retourne sur lui-même) et retourne la nouvelle direction
- * si elle est valide.
- *
- * @param {KeyboardEvent} event - L'événement clavier qui contient les informations sur la touche pressée.
- * @param {string} currentDirection - La direction actuelle du serpent (peut être "UP", "DOWN", "LEFT", ou "RIGHT").
- * @returns {string} - La nouvelle direction du serpent après traitement, ou la direction actuelle si le changement n'est pas valide.
- */
-export function handleDirectionChange() {
-  // A compléter
-  
-// Обновление состояния игры
-function updateGame() {
-  let newHead = { ...game.snake[0] };
+// controls.js
 
-  // Двигаем голову змеи
-  switch (game.direction) {
-    case 'UP':
-      newHead.y -= 1;
+/**
+ * Traite les changements de direction du serpent en fonction des touches du clavier.
+ *
+ * Cette fonction reçoit un événement `keydown` et la direction actuelle du serpent, puis retourne
+ * la nouvelle direction en fonction de la touche appuyée. Si la touche appuyée n'est pas valide
+ * pour le mouvement actuel, la direction reste inchangée.
+ *
+ * @param {KeyboardEvent} event - L'événement clavier.
+ * @param {string} currentDirection - La direction actuelle du serpent.
+ * @returns {string} - La nouvelle direction du serpent ("LEFT", "UP", "RIGHT", "DOWN").
+ */
+export function handleDirectionChange(event, currentDirection) {
+  switch (event.key) {
+    case "ArrowLeft":
+      if (currentDirection !== "RIGHT") return "LEFT";
       break;
-    case 'DOWN':
-      newHead.y += 1;
+    case "ArrowUp":
+      if (currentDirection !== "DOWN") return "UP";
       break;
-    case 'LEFT':
-      newHead.x -= 1;
+    case "ArrowRight":
+      if (currentDirection !== "LEFT") return "RIGHT";
       break;
-    case 'RIGHT':
-      newHead.x += 1;
+    case "ArrowDown":
+      if (currentDirection !== "UP") return "DOWN";
+      break;
+    default:
       break;
   }
-
-  // Двигать змею
-  socket.on('move', (direction) => {
-    game.direction = direction;
-  });
+  return currentDirection;
 }
