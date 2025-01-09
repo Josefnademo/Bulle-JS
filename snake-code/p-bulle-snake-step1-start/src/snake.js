@@ -1,71 +1,77 @@
-// snake.js
-
 /**
- * Initialise le serpent au début du jeu.
- *
- * Cette fonction crée le serpent en tant que tableau contenant un seul segment,
- * positionné à une position de départ définie sur la grille.
- *
- * @returns {Array<{x: number, y: number}>} - Un tableau contenant un objet représentant la position du premier segment du serpent.
+ * Classe représentant le serpent dans le jeu.
  */
-export function initSnake() {
-  const initialSnake = [{ x: 10, y: 10 }]; // Position initiale du serpent
-  return initialSnake;
-}
-
-/**
- * Déplace le serpent dans la direction actuelle.
- *
- * Cette fonction calcule la nouvelle position de la tête du serpent en fonction
- * de la direction actuelle (gauche, haut, droite, bas). Le reste du corps du serpent
- * suit la tête. La fonction retourne un objet représentant la nouvelle position de la tête du serpent.
- *
- * @param {Array<{x: number, y: number}>} snake - Le tableau représentant le serpent, où chaque élément est un segment avec des coordonnées `x` et `y`.
- * @param {string} direction - La direction actuelle du mouvement du serpent ("LEFT", "UP", "RIGHT", ou "DOWN").
- * @param {number} box - La taille d'une case de la grille en pixels, utilisée pour déterminer la distance de déplacement du serpent.
- * @returns {{x: number, y: number}} - Un objet représentant les nouvelles coordonnées `x` et `y` de la tête du serpent après le déplacement.
- */
-export function moveSnake(snake, direction, box) {
-  let newHead;
-  switch (direction) {
-    case "LEFT":
-      newHead = { x: snake[0].x - box, y: snake[0].y };
-      break;
-    case "UP":
-      newHead = { x: snake[0].x, y: snake[0].y - box };
-      break;
-    case "RIGHT":
-      newHead = { x: snake[0].x + box, y: snake[0].y };
-      break;
-    case "DOWN":
-      newHead = { x: snake[0].x, y: snake[0].y + box };
-      break;
-    default:
-      break;
+export class Snake {
+  /**
+   * Crée une instance du serpent.
+   *
+   * @param {number} gridSize - La taille d'une case sur la grille du jeu, utilisée pour définir la taille du serpent.
+   */
+  constructor(gridSize) {
+    this.gridSize = gridSize; // Taille d'une case
+    this.body = [{ x: 5, y: 5 }]; // Corps du serpent, débutant avec un seul segment
+    this.direction = { x: 1, y: 0 }; // Direction initiale du serpent (vers la droite)
+    this.head = this.body[0]; // La tête du serpent est le premier segment
   }
 
-  // Le reste du corps du serpent suit la tête
-  snake.unshift(newHead);
-  snake.pop(); // Retire le dernier segment du serpent pour simuler le mouvement
-  return newHead;
-}
+  /**
+   * Réinitialise le serpent à sa position de départ.
+   */
+  reset() {
+    this.body = [
+      { x: 5, y: 5 },
+      { x: 4, y: 5 },
+    ]; // Position initiale du serpent
+    this.direction = { x: 1, y: 0 }; // Direction initiale (vers la droite)
+    this.head = this.body[0]; // La tête du serpent
+  }
 
-/**
- * Dessine le serpent sur le canvas.
- *
- * Cette fonction parcourt chaque segment du serpent et le dessine sur le canvas en utilisant
- * un rectangle coloré. La tête du serpent est dessinée dans une couleur différente des autres segments
- * pour la distinguer visuellement. Chaque segment est dessiné à sa position actuelle sur la grille,
- * avec une taille déterminée par la valeur de `box`.
- *
- * @param {CanvasRenderingContext2D} ctx - Le contexte de rendu 2D du canvas utilisé pour dessiner.
- * @param {Array<{x: number, y: number}>} snake - Un tableau représentant le serpent, où chaque élément est un segment avec des coordonnées `x` et `y`.
- * @param {number} box - La taille d'une case de la grille en pixels, utilisée pour déterminer la taille de chaque segment du serpent.
- */
-export function drawSnake(ctx, snake, box) {
-  ctx.fillStyle = "green"; // Couleur de la tête du serpent
-  snake.forEach((segment, index) => {
-    ctx.fillStyle = index === 0 ? "green" : "lightgreen"; // Différencier la tête du reste du corps
-    ctx.fillRect(segment.x, segment.y, box, box); // Dessiner le segment
-  });
+  /**
+   * Déplace le serpent dans la direction actuelle.
+   */
+  move() {
+    const newHead = {
+      x: this.head.x + this.direction.x, // Nouvelle position X de la tête
+      y: this.head.y + this.direction.y, // Nouvelle position Y de la tête
+    };
+    this.body.unshift(newHead); // Ajoute la nouvelle tête au début du corps
+    this.head = newHead; // Met à jour la tête du serpent
+    this.body.pop(); // Retire le dernier segment (si le serpent ne grandit pas)
+  }
+
+  /**
+   * Fait grandir le serpent en ajoutant un segment supplémentaire à la fin.
+   */
+  grow() {
+    const newSegment = { ...this.body[this.body.length - 1] }; // Copie le dernier segment du serpent
+    this.body.push(newSegment); // Ajoute le nouveau segment à la fin du serpent
+  }
+
+  /**
+   * Dessine le serpent sur le canvas.
+   *
+   * @param {CanvasRenderingContext2D} ctx - Le contexte de rendu 2D du canvas utilisé pour dessiner.
+   */
+  draw(ctx) {
+    ctx.fillStyle = "darkgreen"; // Définir la couleur du serpent en vert(tete)
+    for (let segment of this.body) {
+      // Dessine chaque segment du corps du serpent
+      ctx.fillRect(
+        segment.x * this.gridSize, // Position X du segment
+        segment.y * this.gridSize, // Position Y du segment
+        this.gridSize, // Largeur du segment
+        this.gridSize // Hauteur du segment
+      );
+      // Draw body with a lighter color
+      ctx.fillStyle = "green";
+      for (let i = 1; i < this.body.length; i++) {
+        ctx.fillRect(
+          this.body[i].x * this.gridSize,
+          this.body[i].y * this.gridSize,
+          this.gridSize,
+          this.gridSize
+        );
+      }
+    }
+  }
 }

@@ -1,41 +1,28 @@
 /**
- * Vérifie si la tête du serpent entre en collision avec son propre corps.
+ * Vérifie si le serpent entre en collision avec lui-même ou les murs.
  *
- * Cette fonction détermine si la tête du serpent occupe la même position que
- * n'importe quel autre segment de son corps. Si la tête du serpent se trouve
- * aux mêmes coordonnées `x` et `y` qu'un autre segment, la fonction retourne `true`,
- * indiquant une collision avec le corps du serpent (c'est-à-dire que le serpent se mord la queue).
- *
- * @param {{x: number, y: number}} head - Un objet représentant les coordonnées `x` et `y` de la tête du serpent.
- * @param {Array<{x: number, y: number}>} snakeArray - Un tableau d'objets représentant les segments du serpent, où chaque objet contient des coordonnées `x` et `y`.
- * @returns {boolean} - Retourne `true` si la tête du serpent entre en collision avec un segment de son corps, sinon `false`.
+ * @param {Snake} snake - L'objet serpent.
+ * @param {number} canvasWidth - La largeur du canvas.
+ * @param {number} canvasHeight - La hauteur du canvas.
+ * @returns {boolean} - Retourne `true` si une collision est détectée, `false` sinon.
  */
-export function checkCollision() {
-  // A compléter
-}
-
-/**
- * Vérifie si la tête du serpent entre en collision avec les murs du canvas.
- *
- * Cette fonction détermine si la tête du serpent a dépassé les limites du canvas,
- * ce qui signifierait une collision avec un mur. Si la tête du serpent sort du canvas
- * (c'est-à-dire si ses coordonnées `x` ou `y` sont en dehors des limites définies par
- * la largeur et la hauteur du canvas), la fonction retourne `true`, indiquant une collision.
- *
- * @param {{x: number, y: number}} head - Un objet représentant les coordonnées `x` et `y` de la tête du serpent.
- * @param {HTMLCanvasElement} canvas - L'élément canvas représentant la surface de jeu.
- * @param {number} box - La taille d'une case de la grille en pixels, utilisée pour déterminer les limites du déplacement du serpent.
- * @returns {boolean} - Retourne `true` si la tête du serpent entre en collision avec un mur, sinon `false`.
- */
-export function checkWallCollision(head, canvas, box) {
-  const width = canvas.width / box;
-  const height = canvas.height / box;
-
+export function checkCollision(snake, canvasWidth, canvasHeight) {
+  // Collision avec les murs
   if (
-    head.x < 0 || head.x >= width ||
-    head.y < 0 || head.y >= height
+    snake.head.x < 0 ||
+    snake.head.x >= canvasWidth / 20 ||
+    snake.head.y < 0 ||
+    snake.head.y >= canvasHeight / 20
   ) {
     return true;
   }
+
+  // Collision avec le corps du serpent
+  for (let i = 1; i < snake.body.length; i++) {
+    if (snake.head.x === snake.body[i].x && snake.head.y === snake.body[i].y) {
+      return true;
+    }
+  }
+
   return false;
 }

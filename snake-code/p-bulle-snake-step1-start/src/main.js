@@ -1,194 +1,120 @@
-import { initSnake, moveSnake, drawSnake } from "./snake.js";
-import { generateFood, drawFood } from "./food.js";
-import { handleDirectionChange } from "./controls.js";
-import { checkCollision, checkWallCollision } from "./collision.js";
+import { Snake } from "./snake.js";
 import { drawScore } from "./score.js";
+import { Food } from "./food.js";
+import { setControls } from "./controls.js";
+import { checkCollision } from "./collision.js";
 
-const canvasContainer = document.getElementById("gameCanvas");
-let canvas = document.createElement("canvas");
-canvas.width = 400;
-canvas.height = 400;
-canvasContainer.appendChild(canvas);
-const ctx = canvas.getContext("2d");
+// Tableau des scores
+let scores = [];
 
-const box = 20;
-let gameSpeed = 200; // Vitesse par défaut (facile)
-let snake;
-let food;
-let direction = "RIGHT";
-let score = 0;
-let gameInterval;
-let musicEnabled = true;
-
-// Fonction pour initialiser le serpent
-function initSnake() {
-  return [{ x: 10 * box, y: 10 * box }];
-}
-
-// Fonction pour déplacer le serpent
-function moveSnake(snake, direction, box) {
-  let newHead;
-  switch (direction) {
-    case "LEFT":
-      newHead = { x: snake[0].x - box, y: snake[0].y };
-      break;
-    case "UP":
-      newHead = { x: snake[0].x, y: snake[0].y - box };
-      break;
-    case "RIGHT":
-      newHead = { x: snake[0].x + box, y: snake[0].y };
-      break;
-    case "DOWN":
-      newHead = { x: snake[0].x, y: snake[0].y + box };
-      break;
-  }
-  snake.unshift(newHead);
-  snake.pop();
-  return newHead;
-}
-
-// Fonction pour dessiner le serpent
-function drawSnake(ctx, snake, box) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous frame
-  ctx.fillStyle = "green";
-  snake.forEach((segment, index) => {
-    ctx.fillStyle = index === 0 ? "green" : "lightgreen";
-    ctx.fillRect(segment.x, segment.y, box, box);
-  });
-}
-
-// Fonction pour générer la nourriture
-function generateFood(box, canvas) {
-  return {
-    x: Math.floor(Math.random() * (canvas.width / box)) * box,
-    y: Math.floor(Math.random() * (canvas.height / box)) * box,
-  };
-}
-
-// Fonction pour dessiner la nourriture
-function drawFood(ctx, food, box) {
-  ctx.fillStyle = "red";
-  ctx.fillRect(food.x, food.y, box, box);
-}
-
-// Fonction pour dessiner le score
-function drawScore(ctx, score) {
-  ctx.fillStyle = "black";
-  ctx.font = "20px Arial";
-  ctx.fillText("Score: " + score, 10, 20);
-}
-
-// Fonction pour gérer le changement de direction du serpent
-function handleDirectionChange(event, direction) {
-  switch (event.key) {
-    case "ArrowLeft":
-      if (direction !== "RIGHT") direction = "LEFT";
-      break;
-    case "ArrowUp":
-      if (direction !== "DOWN") direction = "UP";
-      break;
-    case "ArrowRight":
-      if (direction !== "LEFT") direction = "RIGHT";
-      break;
-    case "ArrowDown":
-      if (direction !== "UP") direction = "DOWN";
-      break;
-  }
-  return direction;
-}
-
-// Fonction pour vérifier les collisions avec les murs
-function checkWallCollision(snake, canvas) {
-  const head = snake[0];
-  return (
-    head.x < 0 ||
-    head.x >= canvas.width ||
-    head.y < 0 ||
-    head.y >= canvas.height
-  );
-}
-
-// Fonction pour vérifier les collisions avec le serpent lui-même
-function checkCollision(snake) {
-  const head = snake[0];
-  for (let i = 1; i < snake.length; i++) {
-    if (head.x === snake[i].x && head.y === snake[i].y) {
-      return true;
-    }
-  }
-  return false;
-}
-
-// Fonction pour démarrer le jeu
 function startGame() {
+  // Masquer le menu et afficher le canvas
   document.getElementById("menu").style.display = "none";
+  document.getElementById("gameCanvas").style.display = "block";
+  document.getElementById("replayButton").style.display = "none"; // Cacher le bouton de replay
+  document.getElementById("viewScoreButton").style.display = "none"; // Cacher le bouton de voir le score
+  document.getElementById("mainMenuButton").style.display = "none"; // Cacher le bouton du menu principal
 
-  // Remettre le canvas par défaut
-  canvasContainer.innerHTML = "";
-  canvas = document.createElement("canvas");
-  canvas.width = 400;
-  canvas.height = 400;
-  canvasContainer.appendChild(canvas);
-  ctx = canvas.getContext("2d");
-
-  snake = initSnake();
-  food = generateFood(box, canvas);
-
-  gameSpeed = parseInt(
-    document.querySelector("input[name='difficulty']:checked").value
+  // Récupérer la difficulté choisie
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+  const gridSize = 20; // Taille de chaque case
+  const speed = parseInt(
+    document.querySelector('input[name="difficulty"]:checked').value
   );
 
-  gameInterval = setInterval(draw, gameSpeed);
+  const snake = new Snake(gridSize); // Créer un serpent
+  const food = new Food(gridSize, canvas.width, canvas.height); // Créer de la nourriture
+  let score = 0; // Score initial
+  let timePassed = 0; // Timer initialisé à 0
+  setControls(snake); // Lier les contrôles du serpent
+
+  // Afficher le timer sur la page
+  const timerElement = document.getElementById("timer");
+  timerElement.innerText = `Temps: 0`; // Afficher le temps initial
+
+  // Timer de jeu qui se met à jour chaque seconde
+  const gameTimer = setInterval(() => {
+    timePassed++; // Incrémenter le temps passé
+    timerElement.innerText = `Temps: ${timePassed}`; // Mettre à jour l'affichage du temps
+  }, 1000); // Chaque seconde
+
+  // Boucle du jeu
+  const gameInterval = setInterval(() => {
+    snake.move(); // Déplacer le serpent
+
+    // Vérifier les collisions
+    if (checkCollision(snake, canvas.width, canvas.height)) {
+      clearInterval(gameInterval); // Terminer le jeu en cas de collision
+      clearInterval(gameTimer); // Arrêter le timer
+      showEndGameButtons(score, timePassed); // Passer aussi le timer à la fonction de fin de jeu
+      return;
+    }
+
+    // Vérifier si le serpent mange la nourriture
+    if (snake.head.x === food.position.x && snake.head.y === food.position.y) {
+      snake.grow(); // Grandir le serpent
+      food.position = food.generatePosition(); // Générer une nouvelle nourriture
+      score++; // Incrémenter le score
+    }
+
+    // Dessiner tout
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer l'écran
+    snake.draw(ctx); // Dessiner le serpent
+    food.draw(ctx); // Dessiner la nourriture
+    drawScore(ctx, score); // Afficher le score
+  }, speed); // Intervalle de jeu
 }
 
-// Fonction pour dessiner le jeu à chaque rafraîchissement
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function showEndGameButtons(score, timePassed) {
+  // Afficher les boutons de fin de jeu
+  document.getElementById("replayButton").style.display = "block";
+  document.getElementById("viewScoreButton").style.display = "block";
+  document.getElementById("mainMenuButton").style.display = "block";
 
-  drawSnake(ctx, snake, box);
-  drawFood(ctx, food, box);
-  drawScore(ctx, score);
-
-  snake = moveSnake(snake, direction, box);
-
-  if (checkWallCollision(snake, canvas) || checkCollision(snake)) {
-    endGame();
+  // Ajouter le score et le temps dans le tableau des scores
+  const playerName = prompt("Entrez votre nom pour enregistrer votre score:");
+  if (playerName) {
+    scores.push({ name: playerName, score: score, time: timePassed });
   }
 
-  if (checkCollision(snake, food)) {
-    score++;
-    food = generateFood(box, canvas);
+  // Mettre à jour le tableau des scores
+  updateScoreTable();
+
+  alert(`Game Over! Score: ${score}, Temps: ${timePassed}`);
+}
+
+function updateScoreTable() {
+  const scoreBody = document.getElementById("scoreBody");
+  scoreBody.innerHTML = ""; // Vider le tableau avant de le mettre à jour
+  scores.sort((a, b) => b.score - a.score); // Trier les scores par ordre décroissant
+
+  // Ajouter chaque score dans la table
+  scores.forEach((entry) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${entry.name}</td><td>${entry.score}</td><td>${entry.time}</td>`;
+    scoreBody.appendChild(row);
+  });
+
+  // Afficher la table des scores uniquement si il y a des scores
+  if (scores.length > 0) {
+    document.getElementById("scoreTable").style.display = "block"; // Afficher la table des scores
   }
 }
 
-// Fonction pour arrêter le jeu
-function endGame() {
-  clearInterval(gameInterval);
-  alert("Game Over! Score: " + score);
-
-  // Réafficher le menu après la fin du jeu
-  document.getElementById("menu").style.display = "flex";
+// Fonction de fin de jeu
+function endGame(score) {
+  alert(`Temps écoulé! Score final: ${score}`);
+  showEndGameButtons(score, 0);
 }
 
-// Fonction pour activer ou désactiver la musique
-function toggleMusic() {
-  musicEnabled = !musicEnabled;
-  // Ajouter le contrôle de la musique ici (comme l'utilisation d'un élément audio)
-}
-
-// Fonction pour ajuster la vitesse du jeu en fonction de la difficulté
-function adjustGameSpeed() {
-  gameSpeed = parseInt(
-    document.querySelector("input[name='difficulty']:checked").value
-  );
-  clearInterval(gameInterval);
-  gameInterval = setInterval(draw, gameSpeed);
-}
-
-// Fonction pour afficher le menu principal
-function showMenu() {
-  document.getElementById("menu").style.display = "flex";
-}
-
-// Afficher le menu principal au démarrage
-showMenu();
+// Écouteurs d'événements
+document.getElementById("startButton").addEventListener("click", startGame);
+document.getElementById("replayButton").addEventListener("click", startGame);
+document.getElementById("viewScoreButton").addEventListener("click", () => {
+  alert("Voir les meilleurs scores!");
+});
+document.getElementById("mainMenuButton").addEventListener("click", () => {
+  document.getElementById("menu").style.display = "block"; // Afficher le menu principal
+  document.getElementById("gameCanvas").style.display = "none"; // Masquer le canvas
+});

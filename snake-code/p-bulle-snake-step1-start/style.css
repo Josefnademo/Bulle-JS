@@ -1,0 +1,143 @@
+/* Global Styles */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+h2,
+h3 {
+  color: #333;
+}
+
+/* Menu Styles */
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.menu button {
+  padding: 12px 24px;
+  font-size: 18px;
+  margin: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.menu button:hover {
+  background-color: #45a049;
+}
+
+/* Timer Styles */
+#timerContainer {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #333;
+  background-color: #ffeb3b;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#timer {
+  margin: 0;
+}
+
+/* Canvas Styles */
+canvas {
+  border: 3px solid #333;
+  background-color: #fff;
+  display: none;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+
+/* Buttons at End of Game */
+#gameButtons {
+  display: none;
+  margin-top: 20px;
+}
+
+#gameButtons button {
+  padding: 12px 24px;
+  font-size: 18px;
+  margin: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #2196f3;
+  color: white;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+#gameButtons button:hover {
+  background-color: #1976d2;
+}
+
+/* Score Table Styles */
+#scoreContainer {
+  margin-top: 30px;
+  width: 80%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#scoreTable {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #2196f3;
+  color: white;
+}
+
+td {
+  background-color: #f9f9f9;
+}
+
+#scoreBody {
+  font-size: 16px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  body {
+    padding: 20px;
+  }
+
+  .menu button {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  #scoreTable {
+    width: 100%;
+  }
+}
