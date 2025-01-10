@@ -19,9 +19,7 @@ function startGame() {
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
   const gridSize = 20; // Taille de chaque case
-  const speed = parseInt(
-    document.querySelector('input[name="difficulty"]:checked').value
-  );
+  const speed = parseInt(document.querySelector('input[name="difficulty"]:checked').value);//fait référence(et selectionet) à un élément input radio
 
   const snake = new Snake(gridSize); // Créer un serpent
   const food = new Food(gridSize, canvas.width, canvas.height); // Créer de la nourriture
@@ -65,6 +63,7 @@ function startGame() {
     drawScore(ctx, score); // Afficher le score
   }, speed); // Intervalle de jeu
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function showEndGameButtons(score, timePassed) {
   // Afficher les boutons de fin de jeu
@@ -75,7 +74,7 @@ function showEndGameButtons(score, timePassed) {
   // Ajouter le score et le temps dans le tableau des scores
   const playerName = prompt("Entrez votre nom pour enregistrer votre score:");
   if (playerName) {
-    scores.push({ name: playerName, score: score, time: timePassed });
+    scores.push({ name: playerName, score: score, time: timePassed});
   }
 
   // Mettre à jour le tableau des scores
@@ -85,14 +84,14 @@ function showEndGameButtons(score, timePassed) {
 }
 
 function updateScoreTable() {
-  const scoreBody = document.getElementById("scoreBody");
+  const scoreBody = document.getElementById("scoreBody"); //est une méthode de l'objet document qui permet de récupérer un élément HTML en utilisant son attribut id.
   scoreBody.innerHTML = ""; // Vider le tableau avant de le mettre à jour
   scores.sort((a, b) => b.score - a.score); // Trier les scores par ordre décroissant
 
   // Ajouter chaque score dans la table
   scores.forEach((entry) => {
     const row = document.createElement("tr");
-    row.innerHTML = `<td>${entry.name}</td><td>${entry.score}</td><td>${entry.time}</td>`;
+    row.innerHTML = `<td>${entry.name}</td><td>${entry.score}</td><td>${entry.time}</td><td>${entry.speed}</td>`;
     scoreBody.appendChild(row);
   });
 
@@ -102,11 +101,11 @@ function updateScoreTable() {
   }
 }
 
-// Fonction de fin de jeu
+/*// Fonction de fin de jeu
 function endGame(score) {
   alert(`Temps écoulé! Score final: ${score}`);
   showEndGameButtons(score, 0);
-}
+}*/
 
 // Écouteurs d'événements
 document.getElementById("startButton").addEventListener("click", startGame);

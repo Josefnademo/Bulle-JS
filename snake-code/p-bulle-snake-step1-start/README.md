@@ -1,5 +1,13 @@
 # Jeu du Serpent
 
+# Bulle-JS
+P_Bulle - Pratique de développement.     Il ne s'agit que de faire de la prog
+
+## le branch principale du projet
+Le branch principale du projetc'est le branch "main-final", donc il faut installer des fichiers de ce branch 
+## lencement du projet
+Mon projet Snake peut être exécuté à l'aide de Visual Studio Code et vous devez utiliser l'extension « Live Server » pour l'exécuter, c'est une étape obligatoire.
+
 ## Description
 
 Ce projet implémente un jeu classique du serpent en utilisant **JavaScript**. Le jeu est dessiné sur un canevas HTML (`<canvas>`) et utilise la syntaxe des modules ES (ECMAScript Modules, ESM) pour organiser le code en plusieurs fichiers avec des responsabilités distinctes. Le serveur de développement est géré par **Vite**, un outil moderne qui permet un rechargement rapide et une configuration minimale.

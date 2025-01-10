@@ -34,9 +34,9 @@ export class Snake {
       x: this.head.x + this.direction.x, // Nouvelle position X de la tête
       y: this.head.y + this.direction.y, // Nouvelle position Y de la tête
     };
-    this.body.unshift(newHead); // Ajoute la nouvelle tête au début du corps
+    this.body.unshift(newHead); // Ajoute la nouvelle tête au début du corps(ce qui fait avancer la tête).
     this.head = newHead; // Met à jour la tête du serpent
-    this.body.pop(); // Retire le dernier segment (si le serpent ne grandit pas)
+    this.body.pop(); // Retire le dernier segment (si le serpent ne mange pas de nourriture )
   }
 
   /**
@@ -63,10 +63,10 @@ export class Snake {
         this.gridSize // Hauteur du segment
       );
       // Draw body with a lighter color
-      ctx.fillStyle = "green";
+      ctx.fillStyle = "lightgreen"; //définit la couleur de remplissage pour les formes que l'on dessine
       for (let i = 1; i < this.body.length; i++) {
         ctx.fillRect(
-          this.body[i].x * this.gridSize,
+          this.body[i].x * this.gridSize, //this.gridSize pour s'assurer que les segments sont correctement dimensionnés en fonction de la taille de la grille de jeu.
           this.body[i].y * this.gridSize,
           this.gridSize,
           this.gridSize
